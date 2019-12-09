@@ -7,7 +7,7 @@ router.get("/", (req, res) => {
   res.json({ app: "Is running..." });
 });
 
-router.get("/users", async (req, res) => {
+router.get("/users", restricted, async (req, res) => {
   try {
     const allUsers = await users.getUsers();
     allUsers
