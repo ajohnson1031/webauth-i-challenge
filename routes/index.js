@@ -51,11 +51,11 @@ router.post("/login", async (req, res) => {
   else {
     try {
       const logUser = await users.findUser(user.username);
-      !logUser
-        ? res.status(404).json({ message: "No such user found." })
-        : logUser && bcrypt.compareSync(user.password, logUser.password)
-        ? res.status(200).json({ message: "Login successful. Welcome!" })
-        : res.status(401).json({ message: "Invalid credentials." });
+      if (!logUser) res.status(404).json({ message: "No such user found." });
+      else if (logUser && bcrypt.compareSync(user.password, logUser.password)) {
+        req.session.user = user;
+        res.status(200).json({ message: "Login successful. Welcome!" });
+      } else res.status(401).json({ message: "Invalid credentials." });
     } catch (error) {
       res.status(500).json({ error: "db error: ", error });
     }
